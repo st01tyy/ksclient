@@ -51,7 +51,6 @@ public class LoginActivity extends CustomActivity
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("确认退出程序？");
-        builder.setIcon(R.mipmap.ic_launcher_round);
         builder.setPositiveButton("确认", new DialogInterface.OnClickListener()
         {
             @Override
