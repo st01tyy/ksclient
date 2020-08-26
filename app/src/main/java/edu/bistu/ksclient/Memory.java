@@ -4,6 +4,7 @@ import android.util.Log;
 
 import edu.bistu.ksclient.automata.Automata;
 import edu.bistu.ksclient.automata.Event;
+import edu.bistu.ksclient.model.User;
 
 public class Memory
 {
@@ -12,12 +13,18 @@ public class Memory
 
     public static CustomActivity currentActivity;
 
+    public final static String serverIP = "192.168.0.106";
+
+    public static User user;
+
     public static void initialize()
     {
         Log.d(Memory.class.getName(), "内存初始化");
 
         automata = new Automata();
         automataThread = new Thread(automata, "automata-thread");
+
+        user =  null;
 
         automataThread.start();
     }

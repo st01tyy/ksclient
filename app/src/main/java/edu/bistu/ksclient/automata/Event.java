@@ -20,7 +20,8 @@ public class Event
         return eventTime;
     }
 
-    public Event(Integer eventNumber, Object attachment, Long eventTime) {
+    public Event(Integer eventNumber, Object attachment, Long eventTime)
+    {
         this.eventNumber = eventNumber;
         this.attachment = attachment;
         this.eventTime = eventTime;

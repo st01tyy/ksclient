@@ -9,7 +9,6 @@
     tools:context=".LoginActivity">
 
     <TextView
-        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
@@ -22,7 +21,7 @@
         android:textSize="24sp" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/editText_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -34,7 +33,7 @@
         android:textSize="18sp" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/editText_pw"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
@@ -45,7 +44,7 @@
         android:singleLine="true" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -56,7 +55,7 @@
         android:visibility="invisible" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button_login"
         android:layout_width="273dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
