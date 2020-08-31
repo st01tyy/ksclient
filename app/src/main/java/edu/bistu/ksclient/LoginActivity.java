@@ -4,13 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import edu.bistu.ksclient.runnable.LoginService;
 
 public class LoginActivity extends CustomActivity
 {
@@ -18,6 +22,8 @@ public class LoginActivity extends CustomActivity
     private EditText editText_pw;
     private TextView textView_hint;
     private Button button_login;
+
+    private ProgressDialog progressDialog;
 
     private class Handler extends CustomActivity.Handler
     {
@@ -30,14 +36,33 @@ public class LoginActivity extends CustomActivity
             if(i == 2)
             {
                 /**
-                 * 登录结果
-                 * 100：登录成功
+                 * 登录失败
                  * 101：C语言平台API返回登录失败
                  * 102：C语言平台API出现异常
                  * 103：账号已登录
                  * 104：catch IOException
                  * 105：json转换异常
                  */
+
+                int j = msg.arg1;
+                String text = null;
+                if(j == 101)
+                    text = "用户名或密码错误";
+                else if(j == 102)
+                    text = "验证身份时出现异常";
+                else if(j == 103)
+                    text = "该账号已登录";
+                else if(j == 104)
+                    text = "无法访问服务器";
+                else if(j == 102)
+                    text = "程序异常，请重试";
+                else
+                    text = "未知错误代码：" + j;
+                textView_hint.setText(text);
+                textView_hint.setVisibility(View.VISIBLE);
+                if(progressDialog != null && progressDialog.isShowing())
+                    progressDialog.dismiss();
+                unlockUI();
             }
         }
     }
@@ -68,8 +93,18 @@ public class LoginActivity extends CustomActivity
             @Override
             public void onClick(View v)
             {
-                lockDownUI();
-
+                if(editText_id.getText() != null && editText_pw.getText() != null)
+                {
+                    lockDownUI();
+                    Log.d(getClass().getName(),"用户点击了登录按钮");
+                    if(progressDialog == null)
+                    {
+                        progressDialog = new ProgressDialog(LoginActivity.this);
+                        progressDialog.setMessage("正在登录");
+                    }
+                    progressDialog.show();
+                    new Thread(new LoginService(new Long(editText_id.getText().toString()), editText_pw.getText().toString())).start();
+                }
             }
         });
     }

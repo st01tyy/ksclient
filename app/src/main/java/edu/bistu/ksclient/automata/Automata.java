@@ -79,6 +79,7 @@ public class Automata implements Runnable
          * 再进行状态转换
          */
 
+        Log.d(getClass().getName(), "事件被触发：" + event.getEventNumber());
         Integer nextStatus = currentStatus.eventTriggered(event);
         if(nextStatus != null)
         {
@@ -86,6 +87,7 @@ public class Automata implements Runnable
            当前状态支持被触发的事件
             */
 
+           Log.d(getClass().getName(), "下一状态：" + nextStatus);
            changeCurrentStatus(nextStatus, event);
         }
     }

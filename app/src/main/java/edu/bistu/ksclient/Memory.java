@@ -1,6 +1,9 @@
 package edu.bistu.ksclient;
 
+import android.os.Message;
 import android.util.Log;
+
+import org.jetbrains.annotations.NotNull;
 
 import edu.bistu.ksclient.automata.Automata;
 import edu.bistu.ksclient.automata.Event;
@@ -51,6 +54,13 @@ public class Memory
         }
 
         Log.d(Memory.class.getName(), "销毁内存结束");
+    }
+
+    public static void bugOccured(@NotNull String msg)
+    {
+        Message message = new Message();
+        message.what = 0;
+        message.obj = msg;
     }
 
 }

@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 
 import edu.bistu.ksclient.Memory;
+import edu.bistu.ksclient.automata.Event;
 import edu.bistu.ksclient.model.LoginResult;
 import edu.bistu.ksclient.model.User;
 import okhttp3.FormBody;
@@ -43,7 +44,8 @@ public class LoginService implements Runnable
 
         OkHttpClient okHttpClient = new OkHttpClient();
 
-        Message message = new Message();
+        Event event = null;
+
         try
         {
             Response response = okHttpClient.newCall(request).execute();
@@ -59,7 +61,10 @@ public class LoginService implements Runnable
                     if(user == null)
                         throw new Exception("user为空");
                     Memory.user = loginResult.getUser();
+                    event = new Event(1, null, System.currentTimeMillis());
                 }
+                else
+                    event = new Event(2, loginResult.getResult(), System.currentTimeMillis());
             }
             else
                 throw new Exception("loginResult为空");
@@ -68,11 +73,17 @@ public class LoginService implements Runnable
         {
             /* execute()方法触发 */
             e.printStackTrace();
+            event = new Event(2, 104, System.currentTimeMillis());
         }
         catch (Exception e)
         {
             /* 捕获json字符串转换时可能发生的异常 */
             e.printStackTrace();
+            event = new Event(2, 105, System.currentTimeMillis());
+        }
+        finally 
+        {
+            Memory.automata.receiveEvent(event);
         }
     }
 }

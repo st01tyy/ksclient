@@ -5,6 +5,7 @@ import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public abstract class CustomActivity extends AppCompatActivity
@@ -33,9 +34,17 @@ public abstract class CustomActivity extends AppCompatActivity
                     }
                 }
 
-                token = true;
                 startActivity(intent);
-                finish();
+            }
+            else if(msg.what == 0)
+            {
+                /* 异常 */
+                lockDownUI();
+                AlertDialog.Builder builder = new AlertDialog.Builder(CustomActivity.this);
+                builder.setTitle("出BUG了");
+                builder.setMessage((String) msg.obj);
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         }
     }
@@ -76,4 +85,12 @@ public abstract class CustomActivity extends AppCompatActivity
 
     @Override
     public abstract void onBackPressed();
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        token = true;
+        finish();
+    }
 }
