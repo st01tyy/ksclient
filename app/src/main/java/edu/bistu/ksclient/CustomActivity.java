@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import edu.bistu.ksclient.runnable.LogoutService;
+
 public abstract class CustomActivity extends AppCompatActivity
 {
     protected class Handler extends android.os.Handler
@@ -32,6 +34,11 @@ public abstract class CustomActivity extends AppCompatActivity
                         /* 登录失败 */
                         intent.putExtra("isLoginFailed", true);
                     }
+                }
+                else if(i == 2)
+                {
+                    /* 跳转至MainActivity */
+                    intent = new Intent(CustomActivity.this, MainActivity.class);
                 }
 
                 startActivity(intent);
@@ -77,10 +84,19 @@ public abstract class CustomActivity extends AppCompatActivity
         if(!token)
         {
             /* 强制结束活动，需要销毁内存 */
+            Log.d(getClass().getName(), "token = false");
+            new Thread(new LogoutService()).start();
             Memory.shutdown();
         }
 
         Log.d(this.getClass().getName(), "活动被销毁");
+    }
+
+    @Override
+    public void startActivity(Intent intent)
+    {
+        token = true;
+        super.startActivity(intent);
     }
 
     @Override
@@ -90,7 +106,6 @@ public abstract class CustomActivity extends AppCompatActivity
     protected void onStop()
     {
         super.onStop();
-        token = true;
         finish();
     }
 }

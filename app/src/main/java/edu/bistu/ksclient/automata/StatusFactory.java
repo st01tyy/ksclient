@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.bistu.ksclient.automata.status.Status1;
+import edu.bistu.ksclient.automata.status.Status2;
 
 public class StatusFactory
 {
@@ -17,6 +18,7 @@ public class StatusFactory
     {
         statusMap = new HashMap<>();
         statusMap.put(1, new Status1());
+        statusMap.put(2, new Status2());
     }
 
     public AbstractStatus getStatus(Integer statusNumber)

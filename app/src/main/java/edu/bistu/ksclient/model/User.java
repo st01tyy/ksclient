@@ -15,7 +15,7 @@ public class User
     public User()
     {
         id = null;
-        name = null;
+        name = "未命名";
         token = null;
     }
 

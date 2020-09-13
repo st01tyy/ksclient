@@ -146,4 +146,12 @@ public class LoginActivity extends CustomActivity
 
         builder.create().show();
     }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        if(progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
+    }
 }

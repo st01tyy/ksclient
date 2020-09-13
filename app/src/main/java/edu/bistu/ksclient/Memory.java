@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import edu.bistu.ksclient.automata.Automata;
 import edu.bistu.ksclient.automata.Event;
+import edu.bistu.ksclient.model.Subject;
 import edu.bistu.ksclient.model.User;
 
 public class Memory
@@ -16,9 +17,13 @@ public class Memory
 
     public static CustomActivity currentActivity;
 
-    public final static String serverIP = "192.168.0.106";
+    //public final static String serverIP = "192.168.0.106";
+    public final static String serverIP = "192.168.2.107";
+
+    public final static String serverApiPort = "8080";
 
     public static User user;
+    public static Subject[] subjects;
 
     public static void initialize()
     {
@@ -28,6 +33,7 @@ public class Memory
         automataThread = new Thread(automata, "automata-thread");
 
         user =  null;
+        subjects = null;
 
         automataThread.start();
     }
@@ -56,11 +62,13 @@ public class Memory
         Log.d(Memory.class.getName(), "销毁内存结束");
     }
 
-    public static void bugOccured(@NotNull String msg)
+    public static void bugOccurred(@NotNull String msg)
     {
+        Log.e("bugOccurred", msg);
         Message message = new Message();
         message.what = 0;
         message.obj = msg;
+        currentActivity.receiveMessage(message);
     }
 
 }

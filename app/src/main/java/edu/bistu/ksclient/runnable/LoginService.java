@@ -8,9 +8,11 @@ import java.io.IOException;
 
 import edu.bistu.ksclient.Memory;
 import edu.bistu.ksclient.automata.Event;
+import edu.bistu.ksclient.model.LoginRequest;
 import edu.bistu.ksclient.model.LoginResult;
 import edu.bistu.ksclient.model.User;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -30,14 +32,14 @@ public class LoginService implements Runnable
     @Override
     public void run()
     {
-        FormBody.Builder requestBodyBuilder = new FormBody.Builder();
-        requestBodyBuilder.add("id", String.valueOf(id));
-        requestBodyBuilder.add("pw", pw);
+        LoginRequest loginRequest = new LoginRequest(id, pw);
+        Gson gson = new Gson();
+        String json = gson.toJson(loginRequest);
 
-        RequestBody requestBody = requestBodyBuilder.build();
+        RequestBody requestBody = RequestBody.create(json, MediaType.parse("application/json; charset=utf-8"));
 
         Request.Builder requestBuilder = new Request.Builder();
-        requestBuilder.url("http://" + Memory.serverIP + "/login");
+        requestBuilder.url("http://" + Memory.serverIP + ":" + Memory.serverApiPort + "/login");
         requestBuilder.post(requestBody);
 
         Request request = requestBuilder.build();
@@ -50,7 +52,6 @@ public class LoginService implements Runnable
         {
             Response response = okHttpClient.newCall(request).execute();
             String responseData = response.body().string();
-            Gson gson = new Gson();
             LoginResult loginResult = gson.fromJson(responseData, LoginResult.class);
             if(loginResult != null)
             {
