@@ -1,5 +1,6 @@
 package edu.bistu.ksclient;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Message;
 import android.util.Log;
@@ -12,6 +13,8 @@ import edu.bistu.ksclient.runnable.LogoutService;
 
 public abstract class CustomActivity extends AppCompatActivity
 {
+    private ProgressDialog tcpProgressDialog;
+
     protected class Handler extends android.os.Handler
     {
         @Override
@@ -53,12 +56,52 @@ public abstract class CustomActivity extends AppCompatActivity
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
+            else if(msg.what == -1)
+            {
+                /* 建立连接 */
+                lockDownUI();
+                if(tcpProgressDialog == null)
+                    tcpProgressDialog = new ProgressDialog(CustomActivity.this);
+
+                tcpProgressDialog.setMessage("正在连接服务器");
+
+                if(!tcpProgressDialog.isShowing())
+                {
+                    tcpProgressDialog.setCancelable(false);
+                    tcpProgressDialog.show();
+                }
+            }
+            else if(msg.what == -2)
+            {
+                if(tcpProgressDialog == null)
+                    tcpProgressDialog = new ProgressDialog(CustomActivity.this);
+
+                tcpProgressDialog.setMessage("正在登录");
+                if(!tcpProgressDialog.isShowing())
+                {
+                    tcpProgressDialog.setCancelable(false);
+                    tcpProgressDialog.show();
+                }
+            }
+            else if(msg.what == -3)
+            {
+                if(tcpProgressDialog == null)
+                    tcpProgressDialog = new ProgressDialog(CustomActivity.this);
+
+                tcpProgressDialog.setMessage("正在匹配");
+                if(!tcpProgressDialog.isShowing())
+                {
+                    tcpProgressDialog.setCancelable(false);
+                    tcpProgressDialog.show();
+                }
+            }
         }
     }
 
     protected Handler handler;
 
     protected boolean token = false;
+    private boolean isSwitchActivity = false;
 
     protected void initialize()
     {
@@ -85,6 +128,8 @@ public abstract class CustomActivity extends AppCompatActivity
         {
             /* 强制结束活动，需要销毁内存 */
             Log.d(getClass().getName(), "token = false");
+            if(tcpProgressDialog != null && tcpProgressDialog.isShowing())
+                tcpProgressDialog.dismiss();
             new Thread(new LogoutService()).start();
             Memory.shutdown();
         }
@@ -96,6 +141,7 @@ public abstract class CustomActivity extends AppCompatActivity
     public void startActivity(Intent intent)
     {
         token = true;
+        isSwitchActivity = true;
         super.startActivity(intent);
     }
 
@@ -106,6 +152,9 @@ public abstract class CustomActivity extends AppCompatActivity
     protected void onStop()
     {
         super.onStop();
-        finish();
+        if(isSwitchActivity)
+            finish();
     }
+
+
 }

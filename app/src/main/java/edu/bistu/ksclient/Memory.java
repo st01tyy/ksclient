@@ -9,11 +9,17 @@ import edu.bistu.ksclient.automata.Automata;
 import edu.bistu.ksclient.automata.Event;
 import edu.bistu.ksclient.model.Subject;
 import edu.bistu.ksclient.model.User;
+import edu.bistu.ksclient.network.NetworkService;
+import edu.bistu.ksclient.network.ServerMessage;
 
 public class Memory
 {
     public static Thread automataThread;
     public static Automata automata;
+
+    public static Thread networkServiceThread;
+    public static NetworkService networkService;
+    public static Long selectedSubjectID;
 
     public static CustomActivity currentActivity;
 
@@ -21,6 +27,7 @@ public class Memory
     public final static String serverIP = "192.168.2.107";
 
     public final static String serverApiPort = "8080";
+    public final static int serverSocketPort = 2333;
 
     public static User user;
     public static Subject[] subjects;
@@ -35,6 +42,8 @@ public class Memory
         user =  null;
         subjects = null;
 
+        selectedSubjectID = null;
+
         automataThread.start();
     }
 
@@ -46,6 +55,9 @@ public class Memory
     public static void shutdown()
     {
         Log.d(Memory.class.getName(), "开始销毁内存");
+
+        if(Memory.networkService != null)
+            Memory.shutdownNetworkService();
 
         Event event = new Event(-1, null, null);
         automata.receiveEvent(event);
@@ -70,5 +82,34 @@ public class Memory
         message.obj = msg;
         currentActivity.receiveMessage(message);
     }
+
+    public static void startNetworkService()
+    {
+        networkService = new NetworkService();
+        networkServiceThread = new Thread(networkService, "NetworkService");
+        networkServiceThread.start();
+    }
+
+    public static void shutdownNetworkService()
+    {
+        Log.d(Memory.class.getName(), "开始终止网络服务");
+
+        ServerMessage serverMessage = ServerMessage.shutdownSignal();
+        Memory.networkService.sendMessage(serverMessage);
+
+        try
+        {
+            networkServiceThread.join();
+            networkServiceThread = null;
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+
+        selectedSubjectID = null;
+        Log.d(Memory.class.getName(), "网络服务已终止");
+    }
+
 
 }

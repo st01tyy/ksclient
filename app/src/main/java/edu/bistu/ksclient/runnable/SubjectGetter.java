@@ -20,6 +20,8 @@ public class SubjectGetter implements Runnable
     @Override
     public void run()
     {
+        Log.d(getClass().getName(), "run()");
+
         Request.Builder requestBuilder = new Request.Builder();
         requestBuilder.url("http://" + Memory.serverIP + ":" + Memory.serverApiPort + "/get_subjects");
         requestBuilder.get();

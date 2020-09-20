@@ -1,5 +1,6 @@
 package edu.bistu.ksclient;
 
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 
+import edu.bistu.ksclient.automata.Event;
 import edu.bistu.ksclient.model.Subject;
 
 public class SubjectAdapter extends Adapter<SubjectAdapter.ViewHolder>
@@ -28,6 +31,8 @@ public class SubjectAdapter extends Adapter<SubjectAdapter.ViewHolder>
         ImageView imageView_subjectIcon;
         TextView textView_subjectName;
 
+        Long subjectID;
+
         ViewHolder(View view)
         {
             super(view);
@@ -39,9 +44,32 @@ public class SubjectAdapter extends Adapter<SubjectAdapter.ViewHolder>
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+    public ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType)
     {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_subject, parent, false);
+        final ViewHolder viewHolder = new ViewHolder(view);
+        viewHolder.linearLayout_subjectItem.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(parent.getContext());
+                builder.setTitle(viewHolder.textView_subjectName.getText());
+                builder.setMessage("开始游戏？");
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        Event event = new Event(4, viewHolder.subjectID, System.currentTimeMillis());
+                        Memory.automata.receiveEvent(event);
+                    }
+                });
+                builder.setNegativeButton("取消", null);
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
         return new ViewHolder(view);
     }
 
@@ -49,6 +77,7 @@ public class SubjectAdapter extends Adapter<SubjectAdapter.ViewHolder>
     public void onBindViewHolder(@NonNull ViewHolder holder, int position)
     {
         holder.textView_subjectName.setText(subjects[position].getName());
+        holder.subjectID = subjects[position].getId();
         /* 设置图标 */
     }
 

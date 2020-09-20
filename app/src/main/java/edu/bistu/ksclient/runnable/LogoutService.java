@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import edu.bistu.ksclient.Memory;
 import edu.bistu.ksclient.model.LogoutRequest;
+import edu.bistu.ksclient.network.ServerMessage;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -40,5 +41,7 @@ public class LogoutService implements Runnable
         {
             e.printStackTrace();
         }
+
+        Memory.user = null;
     }
 }

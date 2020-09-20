@@ -9,14 +9,13 @@ import edu.bistu.ksclient.Memory;
 import edu.bistu.ksclient.automata.AbstractStatus;
 import edu.bistu.ksclient.automata.Event;
 
-public class Status2 extends AbstractStatus
+public class Status3 extends AbstractStatus
 {
-    public Status2()
+    public Status3()
     {
         super();
-        statusNumber = 2;
-        supportedNextStatus.put(3, 1);
-        supportedNextStatus.put(4, 3);
+        statusNumber = 3;
+        supportedNextStatus.put(5, 4);
     }
 
     @Override
@@ -25,11 +24,13 @@ public class Status2 extends AbstractStatus
         super.initialize(from, unSupportedEvents);
         Log.d(getClass().getName(), "initialize()");
 
-        /* 跳转至MainActivity */
         Message message = new Message();
-        message.what = 1;
-        message.arg1 = 2;
+        message.what = -1;
         Memory.currentActivity.receiveMessage(message);
+
+        Long subjectID = (Long) from.getAttachment();
+        Memory.selectedSubjectID = subjectID;
+        Memory.startNetworkService();
 
         checkUnSupportedEvent();
     }
