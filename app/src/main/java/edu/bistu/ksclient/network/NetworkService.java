@@ -47,7 +47,7 @@ public class NetworkService implements Runnable
                     break;
                 }
 
-                loadByteBuffer(ServerMessage.report(), byteBuffer);
+                loadByteBuffer(serverMessage, byteBuffer);
                 Integer length = socketChannel.write(byteBuffer);
                 Log.d(getClass().getName(), "发送了长度为" + length + "的数据");
             }

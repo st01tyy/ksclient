@@ -98,6 +98,7 @@ public class ServerMessage
         message.setN(1);
         Integer[] arr = new Integer[1];
         arr[0] = Memory.selectedSubjectID.intValue();
+        message.setArr(arr);
         return message;
     }
 

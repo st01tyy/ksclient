@@ -24,7 +24,8 @@ public class Memory
     public static CustomActivity currentActivity;
 
     //public final static String serverIP = "192.168.0.106";
-    public final static String serverIP = "192.168.2.107";
+    //public final static String serverIP = "192.168.2.107";
+    public final static String serverIP = "10.16.55.116";
 
     public final static String serverApiPort = "8080";
     public final static int serverSocketPort = 2333;

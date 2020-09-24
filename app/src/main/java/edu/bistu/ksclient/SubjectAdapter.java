@@ -1,6 +1,7 @@
 package edu.bistu.ksclient;
 
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ public class SubjectAdapter extends Adapter<SubjectAdapter.ViewHolder>
 {
     private Subject[] subjects;
 
+    Integer val = 0;
+
     public void setSubjects(Subject[] subjects)
     {
         this.subjects = subjects;
@@ -33,12 +36,16 @@ public class SubjectAdapter extends Adapter<SubjectAdapter.ViewHolder>
 
         Long subjectID;
 
+        Integer tag = val + 1;
+
         ViewHolder(View view)
         {
             super(view);
+            Log.d(getClass().getName(), "view holder constructor()");
             linearLayout_subjectItem = view.findViewById(R.id.linearLayout_subjectItem);
             imageView_subjectIcon = view.findViewById(R.id.imageView_subjectIcon);
             textView_subjectName = view.findViewById(R.id.textView_subjectName);
+            subjectID = 0L;
         }
     }
 
@@ -61,6 +68,8 @@ public class SubjectAdapter extends Adapter<SubjectAdapter.ViewHolder>
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i)
                     {
+                        Log.d(getClass().getName(), "用户点击了科目" + viewHolder.subjectID + viewHolder.textView_subjectName.getText() +
+                                "viewHolder.tag = " + viewHolder.tag);
                         Event event = new Event(4, viewHolder.subjectID, System.currentTimeMillis());
                         Memory.automata.receiveEvent(event);
                     }
@@ -70,7 +79,7 @@ public class SubjectAdapter extends Adapter<SubjectAdapter.ViewHolder>
                 alertDialog.show();
             }
         });
-        return new ViewHolder(view);
+        return viewHolder;
     }
 
     @Override
@@ -78,6 +87,9 @@ public class SubjectAdapter extends Adapter<SubjectAdapter.ViewHolder>
     {
         holder.textView_subjectName.setText(subjects[position].getName());
         holder.subjectID = subjects[position].getId();
+        Log.d(getClass().getName(), "position " + position + "bind complete"
+                + "holder.subjectID = " + holder.subjectID + "subjects[position].getId() = " + subjects[position].getId() +
+                " viewHolder.tag = " + holder.tag);
         /* 设置图标 */
     }
 

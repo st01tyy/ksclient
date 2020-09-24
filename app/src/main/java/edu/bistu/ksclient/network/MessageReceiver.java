@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -55,26 +54,35 @@ public class MessageReceiver implements Runnable
                             Integer n = channel.read(byteBuffer);
                             Log.d(getClass().getName(), "接收长度为" + n + "字节的数据");
 
-                            byteBuffer.limit(byteBuffer.position());
-                            byteBuffer.position(0);
+                            if(n == 0)
+                                Log.d(getClass().getName(), "数据长度为0");
 
-                            ClientMessage message = new ClientMessage();
-                            message.setTime(byteBuffer.getLong());
-                            message.setType(byteBuffer.getInt());
-                            message.setN(byteBuffer.getInt());
-                            if(message.getN() > 0)
+                            else
                             {
-                                Integer[] arr = new Integer[message.getN()];
-                                for(int i = 0; i < message.getN(); i++)
+                                byteBuffer.limit(byteBuffer.position());
+                                byteBuffer.position(0);
+
+                                ClientMessage message = new ClientMessage();
+                                message.setTime(byteBuffer.getLong());
+                                message.setType(byteBuffer.getInt());
+                                message.setN(byteBuffer.getInt());
+                                if(message.getN() > 0)
                                 {
-                                    arr[i] = byteBuffer.getInt();
+                                    Integer[] arr = new Integer[message.getN()];
+                                    for(int i = 0; i < message.getN(); i++)
+                                    {
+                                        arr[i] = byteBuffer.getInt();
+                                    }
+                                    message.setArr(arr);
                                 }
-                                message.setArr(arr);
+
+                                Memory.automata.receiveEvent(getEvent(message));
                             }
 
-                            Memory.automata.receiveEvent(getEvent(message));
+                            byteBuffer.clear();
                         }
                     }
+
                     iterator.remove();
                 }
             }

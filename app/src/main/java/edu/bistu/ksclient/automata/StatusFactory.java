@@ -7,6 +7,7 @@ import edu.bistu.ksclient.automata.status.Status1;
 import edu.bistu.ksclient.automata.status.Status2;
 import edu.bistu.ksclient.automata.status.Status3;
 import edu.bistu.ksclient.automata.status.Status4;
+import edu.bistu.ksclient.automata.status.Status5;
 
 public class StatusFactory
 {
@@ -23,6 +24,7 @@ public class StatusFactory
         statusMap.put(2, new Status2());
         statusMap.put(3, new Status3());
         statusMap.put(4, new Status4());
+        statusMap.put(5, new Status5());
     }
 
     public AbstractStatus getStatus(Integer statusNumber)
