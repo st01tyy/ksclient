@@ -1,14 +1,21 @@
 package edu.bistu.ksclient;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.Serializable;
+
+import edu.bistu.ksclient.model.GameInfo;
 import edu.bistu.ksclient.runnable.LogoutService;
 
 public abstract class CustomActivity extends AppCompatActivity
@@ -43,18 +50,25 @@ public abstract class CustomActivity extends AppCompatActivity
                     /* 跳转至MainActivity */
                     intent = new Intent(CustomActivity.this, MainActivity.class);
                 }
+                else if(i == 3)
+                {
+                    /* 跳转至GameActivity */
+                    GameInfo gameInfo = (GameInfo) msg.obj;
+                    intent = new Intent(CustomActivity.this, GameActivity.class);
+                    intent.putExtra("gameInfo", gameInfo);
+                }
 
                 startActivity(intent);
             }
             else if(msg.what == 0)
             {
                 /* 异常 */
-                lockDownUI();
-                AlertDialog.Builder builder = new AlertDialog.Builder(CustomActivity.this);
-                builder.setTitle("出BUG了");
-                builder.setMessage((String) msg.obj);
-                AlertDialog dialog = builder.create();
-                dialog.show();
+//                lockDownUI();
+//                AlertDialog.Builder builder = new AlertDialog.Builder(CustomActivity.this);
+//                builder.setTitle("出BUG了");
+//                builder.setMessage((String) msg.obj);
+//                AlertDialog dialog = builder.create();
+//                dialog.show();
             }
             else if(msg.what == -1)
             {
@@ -95,6 +109,18 @@ public abstract class CustomActivity extends AppCompatActivity
                     tcpProgressDialog.show();
                 }
             }
+            else if(msg.what == -4)
+            {
+                if(tcpProgressDialog == null)
+                    tcpProgressDialog = new ProgressDialog(CustomActivity.this);
+
+                tcpProgressDialog.setMessage("正在加载资源");
+                if(!tcpProgressDialog.isShowing())
+                {
+                    tcpProgressDialog.setCancelable(false);
+                    tcpProgressDialog.show();
+                }
+            }
         }
     }
 
@@ -128,11 +154,12 @@ public abstract class CustomActivity extends AppCompatActivity
         {
             /* 强制结束活动，需要销毁内存 */
             Log.d(getClass().getName(), "token = false");
-            if(tcpProgressDialog != null && tcpProgressDialog.isShowing())
-                tcpProgressDialog.dismiss();
             new Thread(new LogoutService()).start();
             Memory.shutdown();
         }
+
+        if(tcpProgressDialog != null && tcpProgressDialog.isShowing())
+            tcpProgressDialog.dismiss();
 
         Log.d(this.getClass().getName(), "活动被销毁");
     }
@@ -156,5 +183,10 @@ public abstract class CustomActivity extends AppCompatActivity
             finish();
     }
 
-
+    @SuppressLint("SourceLockedOrientationActivity")
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
 }

@@ -102,4 +102,27 @@ public class ServerMessage
         return message;
     }
 
+    public static ServerMessage gameReady(Integer gameID)
+    {
+        ServerMessage message = new ServerMessage();
+        message.setServiceNumber(2);
+        message.setMessageType(1);
+        message.setN(1);
+        Integer[] arr = new Integer[1];
+        arr[0] = gameID;
+        message.setArr(arr);
+        return message;
+    }
+
+    public static ServerMessage userSelect(Integer[] arr)
+    {
+        ServerMessage message = new ServerMessage();
+        message.setServiceNumber(2);
+        message.setMessageType(2);
+        message.setN(3);
+        message.setArr(arr);
+        return message;
+    }
+
+
 }

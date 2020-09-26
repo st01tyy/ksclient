@@ -8,16 +8,16 @@ import java.util.PriorityQueue;
 import edu.bistu.ksclient.Memory;
 import edu.bistu.ksclient.automata.AbstractStatus;
 import edu.bistu.ksclient.automata.Event;
-import edu.bistu.ksclient.network.ServerMessage;
 
-public class Status2 extends AbstractStatus
+public class Status8 extends AbstractStatus
 {
-    public Status2()
+    public Status8()
     {
         super();
-        statusNumber = 2;
-        supportedNextStatus.put(3, 1);
-        supportedNextStatus.put(4, 3);
+        statusNumber = 8;
+        supportedNextStatus.put(10,8);
+        supportedNextStatus.put(11, 9);
+        supportedNextStatus.put(12, 10);
     }
 
     @Override
@@ -26,18 +26,19 @@ public class Status2 extends AbstractStatus
         super.initialize(from, unSupportedEvents);
         Log.d(getClass().getName(), "initialize()");
 
-        if(from.getEventNumber() == 14)
+        Message message = new Message();
+        if(from.getEventNumber() == 9)
         {
-            Memory.networkService.sendMessage(ServerMessage.disconnect());
-            Memory.networkService.sendMessage(ServerMessage.shutdownSignal());
+            message.what = 3;
+            message.arg1 = (Integer) from.getAttachment();
+        }
+        else if(from.getEventNumber() == 10)
+        {
+            message.what = 4;
+            message.obj = from.getAttachment();
         }
 
-        /* 跳转至MainActivity */
-        Message message = new Message();
-        message.what = 1;
-        message.arg1 = 2;
         Memory.currentActivity.receiveMessage(message);
-
         checkUnSupportedEvent();
     }
 }

@@ -62,21 +62,24 @@ public class MessageReceiver implements Runnable
                                 byteBuffer.limit(byteBuffer.position());
                                 byteBuffer.position(0);
 
-                                ClientMessage message = new ClientMessage();
-                                message.setTime(byteBuffer.getLong());
-                                message.setType(byteBuffer.getInt());
-                                message.setN(byteBuffer.getInt());
-                                if(message.getN() > 0)
+                                while(byteBuffer.position() < byteBuffer.limit())
                                 {
-                                    Integer[] arr = new Integer[message.getN()];
-                                    for(int i = 0; i < message.getN(); i++)
+                                    ClientMessage message = new ClientMessage();
+                                    message.setTime(byteBuffer.getLong());
+                                    message.setType(byteBuffer.getInt());
+                                    message.setN(byteBuffer.getInt());
+                                    if(message.getN() > 0)
                                     {
-                                        arr[i] = byteBuffer.getInt();
+                                        Integer[] arr = new Integer[message.getN()];
+                                        for(int i = 0; i < message.getN(); i++)
+                                        {
+                                            arr[i] = byteBuffer.getInt();
+                                        }
+                                        message.setArr(arr);
                                     }
-                                    message.setArr(arr);
-                                }
 
-                                Memory.automata.receiveEvent(getEvent(message));
+                                    Memory.automata.receiveEvent(getEvent(message));
+                                }
                             }
 
                             byteBuffer.clear();
@@ -103,6 +106,14 @@ public class MessageReceiver implements Runnable
         Event event = null;
         if(type == 1)
             event = new Event(6, null, message.getTime());
+        else if(type == 3)
+            event = new Event(7, message.getArr()[0], message.getTime());
+        else if(type == 4)
+            event = new Event(9, message.getArr()[0], message.getTime());
+        else if(type == 5)
+            event = new Event(10, message.getArr(), message.getTime());
+        else if(type == 6)
+            event = new Event(13, message.getArr(), message.getTime());
         return event;
     }
 
