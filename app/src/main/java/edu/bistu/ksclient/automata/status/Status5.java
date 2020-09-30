@@ -17,6 +17,7 @@ public class Status5 extends AbstractStatus
         super();
         statusNumber = 5;
         supportedNextStatus.put(7,6);
+        supportedNextStatus.put(14, 2);
     }
 
     @Override

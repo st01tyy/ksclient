@@ -1,5 +1,7 @@
 package edu.bistu.ksclient.runnable;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Message;
 
 import com.google.gson.Gson;
@@ -51,6 +53,10 @@ public class LoginService implements Runnable
         try
         {
             Response response = okHttpClient.newCall(request).execute();
+            SharedPreferences sharedPreferences = Memory.currentActivity.getSharedPreferences("storage", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("ip", Memory.serverIP);
+            editor.apply();
             String responseData = response.body().string();
             LoginResult loginResult = gson.fromJson(responseData, LoginResult.class);
             if(loginResult != null)

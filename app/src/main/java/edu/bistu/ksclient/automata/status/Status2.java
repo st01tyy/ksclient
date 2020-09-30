@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.PriorityQueue;
 
+import edu.bistu.ksclient.MainActivity;
 import edu.bistu.ksclient.Memory;
 import edu.bistu.ksclient.automata.AbstractStatus;
 import edu.bistu.ksclient.automata.Event;
@@ -33,10 +34,13 @@ public class Status2 extends AbstractStatus
         }
 
         /* 跳转至MainActivity */
-        Message message = new Message();
-        message.what = 1;
-        message.arg1 = 2;
-        Memory.currentActivity.receiveMessage(message);
+        if(!(Memory.currentActivity instanceof MainActivity))
+        {
+            Message message = new Message();
+            message.what = 1;
+            message.arg1 = 2;
+            Memory.currentActivity.receiveMessage(message);
+        }
 
         checkUnSupportedEvent();
     }

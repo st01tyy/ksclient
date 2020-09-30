@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -23,7 +24,53 @@ public class LoginActivity extends CustomActivity
     private TextView textView_hint;
     private Button button_login;
 
+    private EditText editText_ipPart1;
+    private EditText editText_ipPart2;
+    private EditText editText_ipPart3;
+    private EditText editText_ipPart4;
+
     private ProgressDialog progressDialog;
+
+    class CustomListener implements EditText.OnFocusChangeListener
+    {
+        private Integer position;
+
+        CustomListener(Integer position)
+        {
+            this.position = position;
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b)
+        {
+            EditText editText = (EditText) view;
+            if(!b)
+            {
+                try
+                {
+                    Integer val = Integer.parseInt(editText.getText().toString());
+                    if(val >= 0 && val <= 255)
+                    {
+                        String str = editText_ipPart1.getText().toString()
+                                + "."
+                                + editText_ipPart2.getText().toString()
+                                + "."
+                                + editText_ipPart3.getText().toString()
+                                + "."
+                                + editText_ipPart4.getText().toString();
+                        Memory.serverIP = str;
+                    }
+                    else
+                        throw new Exception();
+                }
+                catch (Exception e)
+                {
+                    String str = Memory.serverIP.split("\\.")[position];
+                    editText.setText(str);
+                }
+            }
+        }
+    }
 
     private class Handler extends CustomActivity.Handler
     {
@@ -77,6 +124,24 @@ public class LoginActivity extends CustomActivity
     }
 
     @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("storage", MODE_PRIVATE);
+        String str = sharedPreferences.getString("ip", null);
+        if(str != null)
+            Memory.serverIP = str;
+
+        Log.e(getClass().getName(), Memory.serverIP);
+        String[] arr = Memory.serverIP.split("\\.");
+        editText_ipPart1.setText(arr[0]);
+        editText_ipPart2.setText(arr[1]);
+        editText_ipPart3.setText(arr[2]);
+        editText_ipPart4.setText(arr[3]);
+    }
+
+    @Override
     protected void initialize()
     {
         super.initialize();
@@ -88,6 +153,16 @@ public class LoginActivity extends CustomActivity
         textView_hint = findViewById(R.id.textView_hint);
         button_login = findViewById(R.id.button_login);
 
+        editText_ipPart1 = findViewById(R.id.editText_ipPart1);
+        editText_ipPart2 = findViewById(R.id.editText_ipPart2);
+        editText_ipPart3 = findViewById(R.id.editText_ipPart3);
+        editText_ipPart4 = findViewById(R.id.editText_ipPart4);
+
+        editText_ipPart1.setOnFocusChangeListener(new CustomListener(0));
+        editText_ipPart2.setOnFocusChangeListener(new CustomListener(1));
+        editText_ipPart3.setOnFocusChangeListener(new CustomListener(2));
+        editText_ipPart4.setOnFocusChangeListener(new CustomListener(3));
+
         button_login.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -97,13 +172,29 @@ public class LoginActivity extends CustomActivity
                 {
                     lockDownUI();
                     Log.d(getClass().getName(),"用户点击了登录按钮");
-                    if(progressDialog == null)
+                    editText_ipPart1.clearFocus();
+                    editText_ipPart2.clearFocus();
+                    editText_ipPart3.clearFocus();
+                    editText_ipPart4.clearFocus();
+                    if(editText_id.getText() == null || editText_pw.getText() == null)
+                        return;
+                    try
                     {
-                        progressDialog = new ProgressDialog(LoginActivity.this);
-                        progressDialog.setMessage("正在登录");
+                        Long val = Long.valueOf(editText_id.getText().toString());
+                        if(progressDialog == null)
+                        {
+                            progressDialog = new ProgressDialog(LoginActivity.this);
+                            progressDialog.setMessage("正在登录");
+                            progressDialog.setCancelable(false);
+                        }
+                        progressDialog.show();
+                        new Thread(new LoginService(val, editText_pw.getText().toString())).start();
                     }
-                    progressDialog.show();
-                    new Thread(new LoginService(new Long(editText_id.getText().toString()), editText_pw.getText().toString())).start();
+                    catch (Exception e)
+                    {
+                        Log.e(getClass().getName(), e.getMessage());
+                        unlockUI();
+                    }
                 }
             }
         });

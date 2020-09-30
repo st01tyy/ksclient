@@ -2,6 +2,7 @@ package edu.bistu.ksclient;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -15,7 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.Serializable;
 
+import edu.bistu.ksclient.automata.Event;
 import edu.bistu.ksclient.model.GameInfo;
+import edu.bistu.ksclient.network.ServerMessage;
 import edu.bistu.ksclient.runnable.LogoutService;
 
 public abstract class CustomActivity extends AppCompatActivity
@@ -103,9 +106,21 @@ public abstract class CustomActivity extends AppCompatActivity
                     tcpProgressDialog = new ProgressDialog(CustomActivity.this);
 
                 tcpProgressDialog.setMessage("正在匹配");
+                tcpProgressDialog.setCancelable(true);
+                tcpProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener()
+                {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface)
+                    {
+                        Log.d(getClass().getName(), "用户取消匹配");
+                        tcpProgressDialog = null;
+                        Memory.networkService.sendMessage(ServerMessage.cancelMatch());
+                        Memory.automata.receiveEvent(new Event(14, null, System.currentTimeMillis()));
+                    }
+                });
                 if(!tcpProgressDialog.isShowing())
                 {
-                    tcpProgressDialog.setCancelable(false);
+                    tcpProgressDialog.setCancelable(true);
                     tcpProgressDialog.show();
                 }
             }
@@ -115,6 +130,8 @@ public abstract class CustomActivity extends AppCompatActivity
                     tcpProgressDialog = new ProgressDialog(CustomActivity.this);
 
                 tcpProgressDialog.setMessage("正在加载资源");
+                tcpProgressDialog.setCancelable(false);
+                tcpProgressDialog.setOnCancelListener(null);
                 if(!tcpProgressDialog.isShowing())
                 {
                     tcpProgressDialog.setCancelable(false);

@@ -200,7 +200,7 @@ public class GameActivity extends CustomActivity
             lock.writeLock().unlock();
         }
 
-        public Integer getTime()
+        Integer getTime()
         {
             return time.intValue();
         }
@@ -217,8 +217,6 @@ public class GameActivity extends CustomActivity
         gameInfo = (GameInfo) intent.getSerializableExtra("gameInfo");
 
         initialize();
-
-        Memory.networkService.sendMessage(ServerMessage.gameReady(gameInfo.getGameID()));
     }
 
     @Override
@@ -228,7 +226,7 @@ public class GameActivity extends CustomActivity
         if(currentQuestion == null)
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            String msg = "游戏即将开始，你被分配到：";
+            String msg;
             if(gameInfo.getTeam() == 0)
                 msg = "游戏即将开始，你被分配到：蓝队";
             else
@@ -239,7 +237,10 @@ public class GameActivity extends CustomActivity
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i)
                 {
+                    Log.d(getClass().getName(), "用户点击了集合点的确认按钮");
                     Memory.networkService.sendMessage(ServerMessage.gameReady(gameInfo.getGameID()));
+                    if(currentQuestion == null)
+                        textView_description.setText("正在等待其他玩家确认");
                 }
             });
             builder.setCancelable(false);
@@ -318,18 +319,18 @@ public class GameActivity extends CustomActivity
     private void setQuestion(Integer i)
     {
         endCounter();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("开始第" + (i + 1) + "题");
-        builder.setPositiveButton("确定", null);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setMessage("开始第" + (i + 1) + "题");
+//        builder.setPositiveButton("确定", null);
         if(alertDialog != null && alertDialog.isShowing())
             alertDialog.dismiss();
+//
+//        alertDialog = builder.create();
+//        alertDialog.show();
 
-        alertDialog = builder.create();
-        alertDialog.show();
-
-        for(int j = 0; j < playerStatusArr.length; j++)
+        for (PlayerStatus playerStatus : playerStatusArr)
         {
-            playerStatusArr[j].setStatus(0);
+            playerStatus.setStatus(0);
         }
         refreshPlayerStatus();
 

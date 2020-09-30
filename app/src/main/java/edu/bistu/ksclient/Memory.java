@@ -2,6 +2,8 @@ package edu.bistu.ksclient;
 
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,9 +25,7 @@ public class Memory
 
     public static CustomActivity currentActivity;
 
-    //public final static String serverIP = "192.168.0.106";
-    //public final static String serverIP = "192.168.2.107";
-    public final static String serverIP = "10.16.55.116";
+    public static String serverIP = "10.16.55.116";
 
     public final static String serverApiPort = "8080";
     public final static int serverSocketPort = 2333;

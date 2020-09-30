@@ -102,6 +102,18 @@ public class ServerMessage
         return message;
     }
 
+    public static ServerMessage cancelMatch()
+    {
+        ServerMessage message = new ServerMessage();
+        message.setServiceNumber(1);
+        message.setMessageType(2);
+        message.setN(1);
+        Integer[] arr = new Integer[1];
+        arr[0] = Memory.selectedSubjectID.intValue();
+        message.setArr(arr);
+        return message;
+    }
+
     public static ServerMessage gameReady(Integer gameID)
     {
         ServerMessage message = new ServerMessage();
