@@ -33,14 +33,19 @@ public class Status2 extends AbstractStatus
             Memory.networkService.sendMessage(ServerMessage.shutdownSignal());
         }
 
-        /* 跳转至MainActivity */
-        if(!(Memory.currentActivity instanceof MainActivity))
-        {
-            Message message = new Message();
-            message.what = 1;
-            message.arg1 = 2;
-            Memory.currentActivity.receiveMessage(message);
-        }
+//        /* 跳转至MainActivity */
+//        if(!(Memory.currentActivity instanceof MainActivity))
+//        {
+//            Message message = new Message();
+//            message.what = 1;
+//            message.arg1 = 2;
+//            Memory.currentActivity.receiveMessage(message);
+//        }
+
+        Message message = new Message();
+        message.what = 1;
+        message.arg1 = 2;
+        Memory.currentActivity.receiveMessage(message);
 
         checkUnSupportedEvent();
     }

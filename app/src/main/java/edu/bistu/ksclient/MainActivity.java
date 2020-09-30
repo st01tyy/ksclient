@@ -90,17 +90,6 @@ public class MainActivity extends CustomActivity
 
         textView_name.setText(Memory.user.getName());
 
-        imageView_logout.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Log.d(getClass().getName(), "用户点击了登出按钮");
-                new Thread(new LogoutService()).start();
-                Memory.automata.receiveEvent(new Event(3, null, System.currentTimeMillis()));
-            }
-        });
-
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
             @Override
@@ -139,5 +128,16 @@ public class MainActivity extends CustomActivity
     {
         super.onResume();
         new Thread(new SubjectGetter()).start();
+
+        imageView_logout.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                Log.d(getClass().getName(), "用户点击了登出按钮");
+                new Thread(new LogoutService()).start();
+                Memory.automata.receiveEvent(new Event(3, null, System.currentTimeMillis()));
+            }
+        });
     }
 }
